@@ -40,7 +40,9 @@ then
     fi
     SYSROOT="${GONK_DIR}/prebuilts/ndk/9/platforms/android-21/arch-arm"
     export CC="$GONK_DIR/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-gcc"
-    export CXXFLAGS="-fpermissive -D__ANDROID__  --sysroot=$SYSROOT \
+    export CFLAGS="-D__ANDROID__  --sysroot=$SYSROOT"
+    export CXX="$GONK_DIR/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-gcc"
+    export CXXFLAGS="-fpermissive -D__ANDROID__  --sysroot=$SYSROOT\
                     -I${GONK_DIR}/external/libcxx/include -I{GONK_DIR}/ndk/sources/android/support/include"
     cmd ./configure --host=arm-linux-androideabi \
                 --disable-processor \
@@ -48,6 +50,8 @@ then
                 --includedir="${GONK_DIR}/prebuilts/ndk/9/platforms/android-21/arch-arm/usr/include"
 else
     CC=cc
+    CFLAGS=
+    CXX=c++
     CXXFLAGS=
     cmd ./configure
 fi
@@ -56,7 +60,7 @@ cmd make -j4
 
 cmd cd ".."
 if test $(uname) = "Linux"; then
-    cmd $CC -lstdc++ -std=c++11 -fPIC -c -static -pthread ${CXXFLAGS} \
+    cmd $CXX -lstdc++ -std=c++11 -fPIC -c -static -pthread ${CXXFLAGS} \
         -Isrc -I${CC_BUILD_DIR}/src src/rust_breakpad_linux.cc
     ar -M < link.mri
     mv librust_breakpad_client.a "$OUT_DIR"
