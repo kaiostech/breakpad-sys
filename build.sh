@@ -43,7 +43,7 @@ then
     export CFLAGS="-D__ANDROID__  --sysroot=$SYSROOT"
     export CXX="$GONK_DIR/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-gcc"
     export CXXFLAGS="-fpermissive -D__ANDROID__  --sysroot=$SYSROOT\
-                    -I${GONK_DIR}/external/libcxx/include -I{GONK_DIR}/ndk/sources/android/support/include"
+                    -I${GONK_DIR}/external/libcxx/include"
     cmd ./configure --host=arm-linux-androideabi \
                 --disable-processor \
                 --disable-tools \
