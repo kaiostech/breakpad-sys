@@ -102,6 +102,10 @@ fn main() {
             "-I{}/prebuilts/ndk/9/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi/include",
             gonk_dir
         ),
+        &format!(
+            "-I{}/prebuilts/ndk/9/platforms/android-21/arch-arm/usr/include",
+            gonk_dir
+        ),
     ];
     match env::var("TARGET") {
         Ok(val) => {
@@ -109,12 +113,14 @@ fn main() {
                 clang_args[4] = "";
                 clang_args[5] = "";
                 clang_args[6] = "";
+                clang_args[7] = "";
             }
         }
         Err(_) => {
             clang_args[4] = "";
             clang_args[5] = "";
             clang_args[6] = "";
+            clang_args[7] = "";
         }
     }
 
