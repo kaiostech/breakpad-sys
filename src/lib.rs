@@ -8,7 +8,7 @@ use std::os::raw::c_void;
 use std::ffi::{CString, CStr};
 
 extern "C" fn dump_callback(
-    descriptor: *const root::google_breakpad::MinidumpDescriptor,
+    descriptor: *const c_void,
     _context: *mut c_void,
     succeeded: bool,
 ) -> bool {
@@ -18,7 +18,7 @@ extern "C" fn dump_callback(
     return succeeded;
 }
 
-extern "C" fn filter_callback(_context: *mut ::std::os::raw::c_void) -> bool {
+extern "C" fn filter_callback(_context: *mut c_void) -> bool {
     // Filter call back from exception
     // TODO: add some stamps from kaios.
     return true;
@@ -33,8 +33,8 @@ pub fn init_breakpad(path: String) -> ExceptionHandler {
             root::rust_breakpad_descriptor_new(CString::new(path.into_bytes()).unwrap().as_ptr());
         let exception_handler = root::rust_breakpad_exceptionhandler_new(
             descriptor,
-            Some(filter_callback),
-            Some(dump_callback),
+            filter_callback as *mut c_void,
+            dump_callback as *mut c_void,
             content.as_mut_ptr() as *mut c_void,
             -1,
         );
