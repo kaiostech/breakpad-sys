@@ -56,6 +56,7 @@ else
     cmd ./configure
 fi
 
+cmd make clean
 cmd make -j4
 
 cmd cd ".."
