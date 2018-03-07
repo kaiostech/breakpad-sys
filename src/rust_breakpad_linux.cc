@@ -1,6 +1,11 @@
 #include "client/linux/handler/exception_handler.h"
 #include "rust_breakpad_linux.h"
 
+using namespace google_breakpad;
+
+typedef google_breakpad::ExceptionHandler::MinidumpCallback MinidumpCallback;
+typedef google_breakpad::ExceptionHandler::FilterCallback FilterCallback;
+
 struct WrapperContext {
     MinidumpCallback mcb;
     FilterCallback fcb;
@@ -32,18 +37,19 @@ extern "C" {
         return reinterpret_cast<void*>(new MinidumpDescriptor(path));
     }
 
-    const char *rust_breakpad_descriptor_path(const MinidumpDescriptor *desc) {
+    const char *rust_breakpad_descriptor_path(const void *desc) {
         return reinterpret_cast<const MinidumpDescriptor*>(desc)->path();
     }
 
-    void rust_breakpad_descriptor_free(MinidumpDescriptor *desc) {
+    void rust_breakpad_descriptor_free(void *desc) {
         delete reinterpret_cast<MinidumpDescriptor*>(desc);
     }
 
-    void *rust_breakpad_exceptionhandler_new(void *desc, FilterCallback fcb,
-            MinidumpCallback mcb, void *context, int install_handler) {
-
-        WrapperContext *wrapper_context = new WrapperContext(fcb, mcb, context);
+    void *rust_breakpad_exceptionhandler_new(void *desc, void* fcb,
+            void* mcb, void *context, int install_handler) {
+        FilterCallback filter_cb = *reinterpret_cast<FilterCallback*>(&fcb);
+        MinidumpCallback minidump_cb = *reinterpret_cast<MinidumpCallback*>(&mcb);
+        WrapperContext *wrapper_context = new WrapperContext(filter_cb, minidump_cb, context);
 
         ExceptionHandler *eh = new ExceptionHandler(
             *reinterpret_cast<MinidumpDescriptor*>(desc),

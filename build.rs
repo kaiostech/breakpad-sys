@@ -77,46 +77,14 @@ fn main() {
 
     println!("start generate ffi!");
 
-    // For X86 Linux target, don't have env GONK_DIR & TARGET.
-    let gonk_dir = match env::var("GONK_DIR") {
-        Ok(val) => format!("{}", val),
-        Err(_) => "".to_owned(),
-    };
-
     println!("cargo:rustc-link-lib=stdc++");
 
-    let mut clang_args = [
+    let clang_args = [
         "-x",
         "c++",
         "-std=c++11",
         "-Ibreakpad/src",
-        &format!(
-            "--sysroot={}/prebuilts/ndk/9/platforms/android-21/arch-arm",
-            gonk_dir
-        ),
-        &format!(
-            "-I{}/prebuilts/ndk/9/sources/cxx-stl/gnu-libstdc++/4.9/include/",
-            gonk_dir
-        ),
-        &format!(
-            "-I{}/prebuilts/ndk/9/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi/include",
-            gonk_dir
-        ),
     ];
-    match env::var("TARGET") {
-        Ok(val) => {
-            if val != "armv7-linux-androideabi" {
-                clang_args[4] = "";
-                clang_args[5] = "";
-                clang_args[6] = "";
-            }
-        }
-        Err(_) => {
-            clang_args[4] = "";
-            clang_args[5] = "";
-            clang_args[6] = "";
-        }
-    }
 
     let bindings = Builder::default()
         .whitelist_function("rust_breakpad_descriptor_new")
@@ -125,8 +93,6 @@ fn main() {
         .whitelist_function("rust_breakpad_exceptionhandler_new")
         .whitelist_function("rust_breakpad_exceptionhandler_write_minidump")
         .whitelist_function("rust_breakpad_exceptionhandler_free")
-        .whitelist_type("FilterCallback")
-        .whitelist_type("MinidumpCallback")
         .link_static("librust_breakpad_client.a")
         .enable_cxx_namespaces()
         .rustified_enum(".*")
