@@ -37,8 +37,8 @@ configure() {
 if test $(uname) = "Linux"; then
     if ! [ -e "${CC_BUILD_DIR}/.git" ];
     then
-        cmd git clone https://github.com/kaiostech/breakpad.git ./${CC_BUILD_DIR}
-        cmd git clone https://github.com/kaiostech/linux-syscall-support.git ./${CC_BUILD_DIR}/src/third_party/lss
+        cmd git clone ssh://git@git.kaiostech.com/KaiOS/breakpad.git ./${CC_BUILD_DIR}
+        cmd git clone ssh://git@git.kaiostech.com/KaiOS/linux-syscall-support.git ./${CC_BUILD_DIR}/src/third_party/lss
 
         cmd pushd "${CC_BUILD_DIR}"
         configure
@@ -46,7 +46,7 @@ if test $(uname) = "Linux"; then
     fi
 
     if ! [ -d "src/generated" ];
-    then 
+    then
         cmd mkdir src/generated
     fi
 fi
