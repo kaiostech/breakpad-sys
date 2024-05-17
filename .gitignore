@@ -1,4 +1,3 @@
 src/generated/
-Cargo.lock
 target/
 breakpad
